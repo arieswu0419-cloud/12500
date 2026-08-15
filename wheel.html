@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>12500 建築物室內設計 ─ 隨機滾輪</title>
+<style>
+  :root{
+    --bg:#0d1424;
+    --bg2:#131d33;
+    --card:#1a2440;
+    --card2:#212d4e;
+    --line:#2e3c63;
+    --txt:#eef2fb;
+    --dim:#9dabc9;
+    --gold:#ffce4d;
+    --gold2:#ffa62b;
+    --ok:#43d9a3;
+    --shadow:0 10px 30px rgba(0,0,0,.45);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    background:radial-gradient(1200px 700px at 50% -10%,#1d2b4d 0%,var(--bg) 60%,#080d18 100%);
+    color:var(--txt);
+    font-family:"Microsoft JhengHei","PingFang TC","Noto Sans TC","Segoe UI",system-ui,sans-serif;
+    min-height:100vh;
+    padding:18px 14px 60px;
+  }
+  .wrap{max-width:1180px;margin:0 auto}
+
+  header{text-align:center;margin-bottom:18px}
+  header h1{
+    margin:0 0 6px;font-size:clamp(20px,4.4vw,30px);letter-spacing:1px;
+    background:linear-gradient(180deg,#fff 10%,var(--gold) 90%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  header p{margin:0;color:var(--dim);font-size:13px}
+
+  .tabs{display:flex;gap:8px;justify-content:center;margin:18px 0 16px}
+  .tab{
+    flex:0 0 auto;padding:10px 26px;border-radius:999px;cursor:pointer;
+    border:1px solid var(--line);background:var(--card);color:var(--dim);
+    font-size:16px;font-weight:700;transition:.2s;
+  }
+  .tab:hover{color:var(--txt);border-color:#4a5c92}
+  .tab.on{
+    background:linear-gradient(180deg,var(--gold),var(--gold2));
+    color:#3a2a00;border-color:transparent;box-shadow:0 6px 18px rgba(255,180,60,.28);
+  }
+
+  section.panel{display:none}
+  section.panel.on{display:block;animation:fade .25s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  .toolbar{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:16px}
+  button{font-family:inherit}
+  .btn{
+    padding:11px 20px;border-radius:12px;border:1px solid var(--line);
+    background:var(--card2);color:var(--txt);font-size:14px;font-weight:700;cursor:pointer;transition:.18s;
+  }
+  .btn:hover:not(:disabled){border-color:#5b6fae;transform:translateY(-1px)}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .btn.primary{
+    background:linear-gradient(180deg,var(--gold),var(--gold2));color:#3a2a00;border-color:transparent;
+    box-shadow:0 8px 20px rgba(255,180,60,.25);font-size:16px;padding:13px 30px;
+  }
+  .btn.small{padding:7px 12px;font-size:12px;border-radius:9px}
+
+  .wheels{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+  .wheels.three{grid-template-columns:repeat(auto-fit,minmax(240px,1fr));max-width:900px;margin:0 auto}
+
+  .card{
+    background:linear-gradient(180deg,var(--card),#16203a);
+    border:1px solid var(--line);border-radius:18px;padding:14px 12px 12px;
+    box-shadow:var(--shadow);display:flex;flex-direction:column;gap:10px;
+  }
+  .card-head{display:flex;align-items:center;justify-content:space-between;gap:6px}
+  .card-head h3{margin:0;font-size:15px;color:var(--gold);letter-spacing:.5px}
+  .count{font-size:11px;color:var(--dim)}
+
+  .stage{position:relative;width:100%;aspect-ratio:1/1;margin:0 auto;max-width:260px;cursor:pointer}
+  .stage svg{width:100%;height:100%;display:block;transform-origin:50% 50%;
+    filter:drop-shadow(0 6px 14px rgba(0,0,0,.45))}
+  .labels{position:absolute;inset:0;pointer-events:none}
+  .lab{
+    position:absolute;left:0;top:0;white-space:nowrap;font-weight:800;color:#fff;
+    text-shadow:0 1px 3px rgba(0,0,0,.65);will-change:transform;
+  }
+  .hub{
+    position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+    width:26%;height:26%;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%,#fff,#e9edf7 40%,#b9c3da 100%);
+    border:3px solid #fff;box-shadow:0 3px 10px rgba(0,0,0,.5);
+    display:flex;align-items:center;justify-content:center;
+    color:#222c47;font-weight:900;font-size:11px;pointer-events:none;
+  }
+  .pointer{
+    position:absolute;left:50%;top:-6px;transform:translateX(-50%);
+    width:0;height:0;border-left:13px solid transparent;border-right:13px solid transparent;
+    border-top:24px solid var(--gold);z-index:5;
+    filter:drop-shadow(0 3px 4px rgba(0,0,0,.6));
+  }
+  .stage.spin .pointer{animation:wob .12s linear infinite}
+  @keyframes wob{0%,100%{transform:translateX(-50%) rotate(0)}50%{transform:translateX(-50%) rotate(-7deg)}}
+
+  .result{
+    text-align:center;font-size:22px;font-weight:900;letter-spacing:1px;
+    background:#0f172c;border:1px solid var(--line);border-radius:12px;padding:8px 6px;
+    min-height:44px;display:flex;align-items:center;justify-content:center;color:var(--gold);
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  }
+  .result.hit{animation:pop .45s ease}
+  @keyframes pop{0%{transform:scale(.8);color:#fff}60%{transform:scale(1.08)}100%{transform:scale(1)}}
+
+  .row{display:flex;gap:8px}
+  .row .btn{flex:1}
+
+  .editor{display:none;flex-direction:column;gap:8px;border-top:1px dashed var(--line);padding-top:10px}
+  .editor.on{display:flex}
+  .editor textarea{
+    width:100%;min-height:120px;resize:vertical;border-radius:10px;padding:9px;
+    background:#0b1120;border:1px solid var(--line);color:var(--txt);
+    font-family:inherit;font-size:14px;line-height:1.6;
+  }
+  .editor .hint{font-size:11px;color:var(--dim);line-height:1.5}
+
+  .summary{
+    margin:18px auto 0;max-width:900px;
+    background:linear-gradient(180deg,#1b2643,#141d34);
+    border:1px solid var(--line);border-radius:16px;padding:14px 16px;box-shadow:var(--shadow);
+  }
+  .summary h4{margin:0 0 8px;font-size:13px;color:var(--dim);font-weight:700;letter-spacing:1px}
+  .summary .big{
+    font-size:clamp(20px,5vw,30px);font-weight:900;color:#fff;letter-spacing:2px;
+    display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;justify-content:center;text-align:center;
+  }
+  .summary .big span.sep{color:var(--gold);font-weight:400}
+  .summary .acts{display:flex;gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap}
+
+  .hist{margin:14px auto 0;max-width:900px}
+  .hist h4{margin:0 0 8px;font-size:13px;color:var(--dim);letter-spacing:1px}
+  .hist ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+  .hist li{
+    background:#131c33;border:1px solid var(--line);border-radius:10px;padding:8px 12px;
+    font-size:14px;display:flex;justify-content:space-between;gap:10px;align-items:center;
+  }
+  .hist li time{color:var(--dim);font-size:11px;flex:0 0 auto}
+  .hist .empty{color:var(--dim);font-size:13px;text-align:center;padding:10px}
+
+  footer{text-align:center;color:#63719a;font-size:11px;margin-top:26px;line-height:1.8}
+
+  @media (max-width:520px){
+    .wheels{grid-template-columns:repeat(2,1fr);gap:10px}
+    .card{padding:10px 8px}
+    .result{font-size:17px;min-height:38px}
+    .card-head h3{font-size:13px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>12500 建築物室內設計｜隨機滾輪</h1>
+    <p>術科測試 抽題輔助工具　·　滾輪內容皆可自行修改</p>
+  </header>
+
+  <div class="tabs">
+    <button class="tab on" data-tab="am">上午題（4 組）</button>
+    <button class="tab" data-tab="pm">下午題（3 組）</button>
+  </div>
+
+  <section class="panel on" id="panel-am">
+    <div class="toolbar">
+      <button class="btn primary" data-spin-all="am">🎲 四組同時隨機</button>
+      <button class="btn" data-reset="am">↺ 還原預設內容</button>
+      <button class="btn" data-clear="am">清除紀錄</button>
+    </div>
+    <div class="wheels" id="wheels-am"></div>
+    <div class="summary">
+      <h4>本次抽出結果</h4>
+      <div class="big" id="sum-am">— 尚未抽籤 —</div>
+      <div class="acts"><button class="btn small" data-copy="am">📋 複製結果</button></div>
+    </div>
+    <div class="hist">
+      <h4>抽籤紀錄（最近 10 筆）</h4>
+      <ul id="hist-am"><li class="empty">尚無紀錄</li></ul>
+    </div>
+  </section>
+
+  <section class="panel" id="panel-pm">
+    <div class="toolbar">
+      <button class="btn primary" data-spin-all="pm">🎲 三組同時隨機</button>
+      <button class="btn" data-reset="pm">↺ 還原預設內容</button>
+      <button class="btn" data-clear="pm">清除紀錄</button>
+    </div>
+    <div class="wheels three" id="wheels-pm"></div>
+    <div class="summary">
+      <h4>本次抽出結果</h4>
+      <div class="big" id="sum-pm">— 尚未抽籤 —</div>
+      <div class="acts"><button class="btn small" data-copy="pm">📋 複製結果</button></div>
+    </div>
+    <div class="hist">
+      <h4>抽籤紀錄（最近 10 筆）</h4>
+      <ul id="hist-pm"><li class="empty">尚無紀錄</li></ul>
+    </div>
+  </section>
+
+  <footer>
+    內容修改後會自動儲存於本機瀏覽器，下次開啟仍保留。<br>
+    點擊圓輪本身也可以單獨抽一次。
+  </footer>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  /* ---------- 預設內容 ---------- */
+  const DEFAULTS = {
+    am: [
+      { title:'第一組', hub:'題號', items:['201','202','203','204','205','206'] },
+      { title:'第二組', hub:'編號', items:['A','B','C','D','E','F'] },
+      { title:'第三組', hub:'空間', items:['客廳','餐廳','主臥房'] },
+      { title:'第四組', hub:'圖類', items:['天花板','立面圖'] }
+    ],
+    pm: [
+      { title:'第一組', hub:'題號', items:['207','208','209','210','211','212'] },
+      { title:'第二組', hub:'組別', items:['甲','乙','丙'] },
+      { title:'第三組', hub:'題號', items:['213','214','215','216','217','218','219','220','221','222','223'] }
+    ]
+  };
+
+  const STORE_KEY = 'wheel12500.v1';
+  const SECTIONS = ['am','pm'];
+
+  /* ---------- 儲存 ---------- */
+  function loadStore(){
+    try{
+      const raw = localStorage.getItem(STORE_KEY);
+      if(!raw) return null;
+      const o = JSON.parse(raw);
+      return (o && o.items) ? o : null;
+    }catch(e){ return null; }
+  }
+  function saveStore(){
+    try{
+      localStorage.setItem(STORE_KEY, JSON.stringify({ items:state.items, hist:state.hist }));
+    }catch(e){}
+  }
+
+  const saved = loadStore();
+  const state = {
+    items: {
+      am: (saved && saved.items.am) || DEFAULTS.am.map(d=>d.items.slice()),
+      pm: (saved && saved.items.pm) || DEFAULTS.pm.map(d=>d.items.slice())
+    },
+    hist: (saved && saved.hist) || { am:[], pm:[] }
+  };
+  // 防止舊資料筆數對不上
+  SECTIONS.forEach(s=>{
+    if(!Array.isArray(state.items[s]) || state.items[s].length !== DEFAULTS[s].length){
+      state.items[s] = DEFAULTS[s].map(d=>d.items.slice());
+    }
+    if(!Array.isArray(state.hist[s])) state.hist[s] = [];
+  });
+
+  /* ---------- 工具 ---------- */
+  const TAU = Math.PI/180;
+  const LABEL_R = 0.30;                    // 標籤半徑（stage 寬度的比例）
+  const polar = (cx,cy,r,a)=>({ x: cx + r*Math.sin(a*TAU), y: cy - r*Math.cos(a*TAU) });
+
+  // 粗估文字寬度（em）：中日韓全形字約 1em，英數半形約 0.62em
+  function emWidth(s){
+    let w = 0;
+    for(const ch of String(s)){
+      w += /[ᄀ-ᇿ⺀-鿿ꥠ-꥿가-퟿豈-﫿＀-｠￠-￦]/.test(ch) ? 1 : 0.62;
+    }
+    return w;
+  }
+
+  function randInt(n){
+    if(n<=1) return 0;
+    if(window.crypto && crypto.getRandomValues){
+      const max = Math.floor(4294967296 / n) * n;
+      const buf = new Uint32Array(1);
+      let v;
+      do { crypto.getRandomValues(buf); v = buf[0]; } while(v >= max);
+      return v % n;
+    }
+    return Math.floor(Math.random()*n);
+  }
+
+  function sectorPath(cx,cy,r,a0,a1){
+    const p0 = polar(cx,cy,r,a0), p1 = polar(cx,cy,r,a1);
+    const large = (a1-a0) > 180 ? 1 : 0;
+    return 'M '+cx+' '+cy+' L '+p0.x.toFixed(3)+' '+p0.y.toFixed(3)+
+           ' A '+r+' '+r+' 0 '+large+' 1 '+p1.x.toFixed(3)+' '+p1.y.toFixed(3)+' Z';
+  }
+
+  /* ---------- 音效 ---------- */
+  let actx = null;
+  function tick(strong){
+    try{
+      if(!actx) actx = new (window.AudioContext||window.webkitAudioContext)();
+      if(actx.state === 'suspended') actx.resume();
+      const o = actx.createOscillator(), g = actx.createGain(), t = actx.currentTime;
+      o.type = 'triangle';
+      o.frequency.setValueAtTime(strong?880:1500, t);
+      g.gain.setValueAtTime(strong?0.10:0.05, t);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + (strong?0.25:0.05));
+      o.connect(g); g.connect(actx.destination);
+      o.start(t); o.stop(t + (strong?0.26:0.06));
+    }catch(e){}
+  }
+
+  /* ---------- 滾輪 ---------- */
+  const CX = 50, CY = 50, R = 47;
+
+  function Wheel(section, index){
+    this.section = section;
+    this.index = index;
+    this.def = DEFAULTS[section][index];
+    this.rot = 0;
+    this.spinning = false;
+    this.result = null;
+    this.build();
+    this.render();
+  }
+
+  Wheel.prototype.items = function(){ return state.items[this.section][this.index]; };
+
+  Wheel.prototype.build = function(){
+    const self = this;
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML =
+      '<div class="card-head"><h3></h3><span class="count"></span></div>'+
+      '<div class="stage"><div class="pointer"></div>'+
+        '<svg viewBox="0 0 100 100"></svg>'+
+        '<div class="labels"></div>'+
+        '<div class="hub"></div>'+
+      '</div>'+
+      '<div class="result">—</div>'+
+      '<div class="row">'+
+        '<button class="btn small act-spin">🎲 隨機</button>'+
+        '<button class="btn small act-edit">✎ 編輯</button>'+
+      '</div>'+
+      '<div class="editor">'+
+        '<textarea spellcheck="false"></textarea>'+
+        '<div class="hint">一行一個項目（也可用逗號、頓號分隔）。</div>'+
+        '<div class="row">'+
+          '<button class="btn small act-save">✓ 套用</button>'+
+          '<button class="btn small act-default">↺ 預設</button>'+
+          '<button class="btn small act-cancel">✕ 取消</button>'+
+        '</div>'+
+      '</div>';
+
+    this.el       = card;
+    this.titleEl  = card.querySelector('h3');
+    this.countEl  = card.querySelector('.count');
+    this.stage    = card.querySelector('.stage');
+    this.svg      = card.querySelector('svg');
+    this.labelsEl = card.querySelector('.labels');
+    this.hubEl    = card.querySelector('.hub');
+    this.resultEl = card.querySelector('.result');
+    this.editor   = card.querySelector('.editor');
+    this.textarea = card.querySelector('textarea');
+    this.spinBtn  = card.querySelector('.act-spin');
+
+    this.titleEl.textContent = this.def.title;
+    this.hubEl.textContent = this.def.hub;
+
+    this.stage.addEventListener('click', function(){ self.spin(); });
+    this.spinBtn.addEventListener('click', function(){ self.spin(); });
+
+    card.querySelector('.act-edit').addEventListener('click', function(){
+      const open = self.editor.classList.toggle('on');
+      if(open){
+        self.textarea.value = self.items().join('\n');
+        self.textarea.focus();
+      }
+    });
+    card.querySelector('.act-cancel').addEventListener('click', function(){
+      self.editor.classList.remove('on');
+    });
+    card.querySelector('.act-save').addEventListener('click', function(){
+      const list = self.textarea.value.split(/[\n,，、;；]+/).map(s=>s.trim()).filter(Boolean);
+      if(!list.length){ alert('至少要有一個項目'); return; }
+      if(list.length > 40){ alert('項目最多 40 個'); return; }
+      state.items[self.section][self.index] = list;
+      saveStore();
+      self.result = null;
+      self.rot = 0;
+      self.render();
+      self.resultEl.textContent = '—';
+      self.editor.classList.remove('on');
+      updateSummary(self.section);
+    });
+    card.querySelector('.act-default').addEventListener('click', function(){
+      self.textarea.value = self.def.items.join('\n');
+    });
+
+    document.getElementById('wheels-'+this.section).appendChild(card);
+  };
+
+  Wheel.prototype.render = function(){
+    const items = this.items();
+    const n = items.length;
+    const step = 360 / n;
+    this.step = step;
+
+    this.countEl.textContent = n + ' 項';
+
+    // 扇形
+    let svg = '<defs><radialGradient id="sh'+this.section+this.index+'" cx="50%" cy="45%" r="60%">'+
+              '<stop offset="70%" stop-color="#000" stop-opacity="0"/>'+
+              '<stop offset="100%" stop-color="#000" stop-opacity=".28"/></radialGradient></defs>';
+    if(n === 1){
+      svg += '<circle cx="'+CX+'" cy="'+CY+'" r="'+R+'" fill="'+this.color(0,1)+'"/>';
+    }else{
+      for(let i=0;i<n;i++){
+        svg += '<path d="'+sectorPath(CX,CY,R,i*step,(i+1)*step)+'" fill="'+this.color(i,n)+
+               '" stroke="rgba(255,255,255,.28)" stroke-width=".5" data-i="'+i+'"/>';
+      }
+    }
+    svg += '<circle cx="'+CX+'" cy="'+CY+'" r="'+R+'" fill="url(#sh'+this.section+this.index+')"/>';
+    svg += '<circle cx="'+CX+'" cy="'+CY+'" r="'+R+'" fill="none" stroke="#ffce4d" stroke-width="2.4"/>';
+    svg += '<circle cx="'+CX+'" cy="'+CY+'" r="'+(R-2.4)+'" fill="none" stroke="rgba(0,0,0,.25)" stroke-width="1"/>';
+    this.svg.innerHTML = svg;
+    this.paths = Array.prototype.slice.call(this.svg.querySelectorAll('path'));
+
+    // 標籤（永遠保持水平，隨輪盤繞行）
+    this.labelsEl.innerHTML = '';
+    this.labelEls = [];
+    // 字級（以 stage 寬度的百分比表示）：同時受「扇形弧長」與「圓心↔外框半徑空間」限制，
+    // 因為標籤永遠水平，轉到左右兩側時是沿半徑方向延伸，那是最吃空間的角度。
+    const maxEm  = Math.max(0.62, items.reduce((m,s)=>Math.max(m, emWidth(s)), 0));
+    const lr     = this.labelR = (n >= 8) ? 0.34 : 0.30;      // 格子多時把字往外移，弧長較充裕
+    const arcPct = (2 * Math.PI * lr * 100) / n;              // 每一格可用弧長
+    const radPct = 2 * Math.min(0.465 - lr, lr - 0.14) * 100; // 轉到左右兩側時可用的半徑空間
+    this.fontPct = Math.min(12, radPct / maxEm, arcPct * 0.8 / maxEm);
+
+    for(let i=0;i<n;i++){
+      const d = document.createElement('div');
+      d.className = 'lab';
+      d.textContent = items[i];
+      this.labelsEl.appendChild(d);
+      this.labelEls.push(d);
+    }
+    this.layout();
+    this.apply(this.rot);
+  };
+
+  Wheel.prototype.color = function(i,n){
+    const hue = Math.round(i * 360 / n + 8);
+    const light = (i % 2 === 0) ? 54 : 45;
+    return 'hsl('+hue+',62%,'+light+'%)';
+  };
+
+  Wheel.prototype.layout = function(){
+    const w = this.stage.clientWidth || 220;
+    this.px = { c: w/2, r: w * (this.labelR || LABEL_R) };
+    if(this.labelEls){
+      const size = w * this.fontPct / 100;
+      this.labelEls.forEach(el=>{ el.style.fontSize = size.toFixed(1)+'px'; });
+    }
+  };
+
+  Wheel.prototype.apply = function(deg){
+    this.rot = deg;
+    this.svg.style.transform = 'rotate('+deg.toFixed(2)+'deg)';
+    if(!this.labelEls) return;
+    const c = this.px.c, r = this.px.r, step = this.step;
+    for(let i=0;i<this.labelEls.length;i++){
+      const a = (i + 0.5) * step + deg;
+      const x = c + r*Math.sin(a*TAU);
+      const y = c - r*Math.cos(a*TAU);
+      this.labelEls[i].style.transform =
+        'translate('+x.toFixed(1)+'px,'+y.toFixed(1)+'px) translate(-50%,-50%)';
+    }
+  };
+
+  Wheel.prototype.highlight = function(idx){
+    if(!this.paths) return;
+    this.paths.forEach(function(p,i){
+      p.setAttribute('stroke', i===idx ? '#fff' : 'rgba(255,255,255,.28)');
+      p.setAttribute('stroke-width', i===idx ? '1.6' : '.5');
+      p.style.filter = i===idx ? 'brightness(1.22)' : '';
+    });
+    if(this.labelEls){
+      this.labelEls.forEach(function(el,i){
+        el.style.opacity = (idx==null || i===idx) ? '1' : '.72';
+      });
+    }
+  };
+
+  Wheel.prototype.spin = function(done){
+    if(this.spinning){ return; }
+    const items = this.items();
+    const n = items.length;
+    if(!n){ return; }
+
+    this.spinning = true;
+    this.stage.classList.add('spin');
+    this.spinBtn.disabled = true;
+    this.highlight(null);
+    this.resultEl.classList.remove('hit');
+    this.resultEl.textContent = '…';
+
+    const target = randInt(n);
+    const step = this.step;
+    // 讓 target 的扇形中心停在正上方（指針處），加一點點偏移更自然
+    const jitter = (Math.random()-0.5) * step * 0.5;
+    const wanted = -((target + 0.5) * step) - jitter;
+    const start = this.rot;
+    const turns = 5 + Math.floor(Math.random()*3);
+    let delta = (wanted - start) % 360;
+    if(delta < 0) delta += 360;
+    delta += turns * 360;
+
+    const dur = 3000 + Math.random()*900;
+    const t0 = performance.now();
+    const self = this;
+    let lastTick = Math.floor(start / step);
+
+    function frame(now){
+      let t = (now - t0) / dur;
+      if(t > 1) t = 1;
+      const e = 1 - Math.pow(1 - t, 4);           // easeOutQuart
+      const deg = start + delta * e;
+      self.apply(deg);
+
+      const cur = Math.floor(deg / step);
+      if(cur !== lastTick && t < 0.995){ lastTick = cur; tick(false); }
+
+      if(t < 1){
+        requestAnimationFrame(frame);
+      }else{
+        self.rot = ((deg % 360) + 360) % 360;
+        self.spinning = false;
+        self.stage.classList.remove('spin');
+        self.spinBtn.disabled = false;
+        self.result = items[target];
+        self.resultEl.textContent = self.result;
+        self.resultEl.classList.add('hit');
+        self.highlight(target);
+        tick(true);
+        if(done) done(self.result);
+      }
+    }
+    requestAnimationFrame(frame);
+  };
+
+  /* ---------- 建立全部滾輪 ---------- */
+  const wheels = { am:[], pm:[] };
+  SECTIONS.forEach(function(s){
+    DEFAULTS[s].forEach(function(_, i){ wheels[s].push(new Wheel(s, i)); });
+  });
+
+  /* ---------- 結果 / 紀錄 ---------- */
+  function currentResult(section){
+    const rs = wheels[section].map(w=>w.result);
+    return rs.every(r=>r != null) ? rs : null;
+  }
+
+  function updateSummary(section){
+    const box = document.getElementById('sum-'+section);
+    const rs = wheels[section].map(w=>w.result);
+    if(rs.every(r=>r == null)){
+      box.textContent = '— 尚未抽籤 —';
+      return;
+    }
+    box.innerHTML = rs.map(r=>'<span>'+escapeHtml(r==null?'？':r)+'</span>')
+                      .join('<span class="sep">·</span>');
+  }
+
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  function pushHist(section){
+    const rs = currentResult(section);
+    if(!rs) return;
+    const d = new Date();
+    const time = ('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2)+':'+('0'+d.getSeconds()).slice(-2);
+    state.hist[section].unshift({ t:time, v:rs.join(' · ') });
+    state.hist[section] = state.hist[section].slice(0,10);
+    saveStore();
+    renderHist(section);
+  }
+
+  function renderHist(section){
+    const ul = document.getElementById('hist-'+section);
+    const list = state.hist[section];
+    if(!list.length){ ul.innerHTML = '<li class="empty">尚無紀錄</li>'; return; }
+    ul.innerHTML = list.map(h=>'<li><span>'+escapeHtml(h.v)+'</span><time>'+escapeHtml(h.t)+'</time></li>').join('');
+  }
+  SECTIONS.forEach(renderHist);
+
+  /* ---------- 全部一起轉 ---------- */
+  function spinAll(section, btn){
+    const ws = wheels[section];
+    if(ws.some(w=>w.spinning)) return;
+    btn.disabled = true;
+    let left = ws.length;
+    ws.forEach(function(w){
+      w.spin(function(){
+        left--;
+        updateSummary(section);
+        if(left === 0){
+          btn.disabled = false;
+          pushHist(section);
+        }
+      });
+    });
+  }
+
+  document.querySelectorAll('[data-spin-all]').forEach(function(b){
+    b.addEventListener('click', function(){ spinAll(b.getAttribute('data-spin-all'), b); });
+  });
+
+  // 單顆轉完也更新摘要
+  SECTIONS.forEach(function(s){
+    wheels[s].forEach(function(w){
+      const orig = w.spin.bind(w);
+      w.spin = function(done){
+        orig(function(r){
+          updateSummary(s);
+          if(done) done(r);
+        });
+      };
+    });
+  });
+
+  /* ---------- 還原 / 清除 / 複製 ---------- */
+  document.querySelectorAll('[data-reset]').forEach(function(b){
+    b.addEventListener('click', function(){
+      const s = b.getAttribute('data-reset');
+      if(!confirm('確定將'+(s==='am'?'上午':'下午')+'題全部滾輪還原成預設內容？')) return;
+      state.items[s] = DEFAULTS[s].map(d=>d.items.slice());
+      saveStore();
+      wheels[s].forEach(function(w){
+        w.result = null; w.rot = 0; w.render(); w.resultEl.textContent = '—';
+        w.editor.classList.remove('on');
+      });
+      updateSummary(s);
+    });
+  });
+
+  document.querySelectorAll('[data-clear]').forEach(function(b){
+    b.addEventListener('click', function(){
+      const s = b.getAttribute('data-clear');
+      state.hist[s] = [];
+      saveStore();
+      renderHist(s);
+    });
+  });
+
+  document.querySelectorAll('[data-copy]').forEach(function(b){
+    b.addEventListener('click', function(){
+      const s = b.getAttribute('data-copy');
+      const rs = wheels[s].map(w=>w.result).filter(r=>r!=null);
+      if(!rs.length){ alert('尚未抽籤'); return; }
+      const txt = (s==='am'?'上午題':'下午題') + '：' + rs.join(' · ');
+      const fallback = function(){
+        const ta = document.createElement('textarea');
+        ta.value = txt; document.body.appendChild(ta); ta.select();
+        try{ document.execCommand('copy'); }catch(e){}
+        document.body.removeChild(ta);
+      };
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(txt).catch(fallback);
+      }else fallback();
+      const old = b.textContent;
+      b.textContent = '✓ 已複製';
+      setTimeout(function(){ b.textContent = old; }, 1400);
+    });
+  });
+
+  /* ---------- 分頁 ---------- */
+  document.querySelectorAll('.tab').forEach(function(t){
+    t.addEventListener('click', function(){
+      document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
+      document.querySelectorAll('.panel').forEach(x=>x.classList.remove('on'));
+      t.classList.add('on');
+      document.getElementById('panel-'+t.getAttribute('data-tab')).classList.add('on');
+      // 版面切換後重新計算標籤位置
+      requestAnimationFrame(function(){
+        wheels[t.getAttribute('data-tab')].forEach(function(w){ w.layout(); w.apply(w.rot); });
+      });
+    });
+  });
+
+  /* ---------- 尺寸變動 ---------- */
+  let rz;
+  window.addEventListener('resize', function(){
+    clearTimeout(rz);
+    rz = setTimeout(function(){
+      SECTIONS.forEach(function(s){
+        wheels[s].forEach(function(w){ w.layout(); w.apply(w.rot); });
+      });
+    }, 120);
+  });
+
+  SECTIONS.forEach(updateSummary);
+  // 首次版面（字型載入後再校正一次）
+  setTimeout(function(){
+    SECTIONS.forEach(function(s){ wheels[s].forEach(function(w){ w.layout(); w.apply(w.rot); }); });
+  }, 60);
+})();
+</script>
+</body>
+</html>
