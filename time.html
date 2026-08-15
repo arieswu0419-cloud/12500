@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>12500／12600 考試計時器</title>
+<style>
+  :root{
+    --bg:#0d1424;
+    --card:#1a2440;
+    --card2:#212d4e;
+    --line:#2e3c63;
+    --txt:#eef2fb;
+    --dim:#9dabc9;
+    --gold:#ffce4d;
+    --gold2:#ffa62b;
+    --ok:#43d9a3;
+    --shadow:0 10px 30px rgba(0,0,0,.45);
+    --mono:"Consolas","SF Mono","Roboto Mono",ui-monospace,monospace;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    background:radial-gradient(1200px 700px at 50% -10%,#1d2b4d 0%,var(--bg) 60%,#080d18 100%);
+    color:var(--txt);
+    font-family:"Microsoft JhengHei","PingFang TC","Noto Sans TC","Segoe UI",system-ui,sans-serif;
+    min-height:100vh;padding:16px 14px 50px;
+  }
+  .wrap{max-width:760px;margin:0 auto}
+
+  header{text-align:center;margin-bottom:14px}
+  header h1{
+    margin:0 0 4px;font-size:clamp(19px,4.2vw,27px);letter-spacing:1px;
+    background:linear-gradient(180deg,#fff 10%,var(--gold) 90%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  header p{margin:0;color:var(--dim);font-size:12px}
+  header a{color:var(--dim);font-size:12px;text-decoration:none;border-bottom:1px dotted var(--line)}
+  header a:hover,header a:focus-visible{color:var(--gold)}
+
+  .subs{display:flex;gap:8px;justify-content:center;margin:14px 0 8px;flex-wrap:wrap}
+  .sub{
+    flex:1 1 240px;max-width:340px;padding:11px 12px;border-radius:14px;cursor:pointer;
+    border:1px solid var(--line);background:var(--card);color:var(--dim);
+    font-family:inherit;font-size:14px;font-weight:700;transition:.2s;line-height:1.4;
+  }
+  .sub b{display:block;font-size:17px;color:inherit}
+  .sub:hover:not(:disabled){color:var(--txt);border-color:#4a5c92}
+  .sub.on{background:var(--card2);color:var(--txt);border-color:var(--gold);
+    box-shadow:0 0 0 1px rgba(255,206,77,.35)}
+  .sub.on b{color:var(--gold)}
+
+  .tabs{display:flex;gap:8px;justify-content:center;margin:0 0 14px;flex-wrap:wrap}
+  .tab{
+    flex:1 1 0;min-width:120px;max-width:220px;padding:10px;border-radius:999px;cursor:pointer;
+    border:1px solid var(--line);background:var(--card);color:var(--dim);
+    font-family:inherit;font-size:15px;font-weight:700;transition:.2s;
+  }
+  .tab:hover:not(:disabled){color:var(--txt);border-color:#4a5c92}
+  .tab.on{background:linear-gradient(180deg,var(--gold),var(--gold2));color:#3a2a00;border-color:transparent;
+    box-shadow:0 6px 18px rgba(255,180,60,.28)}
+  .sub:disabled,.tab:disabled{opacity:.5;cursor:not-allowed}
+
+  .clock{
+    background:linear-gradient(180deg,var(--card),#141d34);border:1px solid var(--line);
+    border-radius:20px;padding:18px 14px 16px;box-shadow:var(--shadow);text-align:center;
+  }
+  .clock .lab{font-size:12px;color:var(--dim);letter-spacing:3px}
+  .clock .now{
+    font-family:var(--mono);font-variant-numeric:tabular-nums;
+    font-size:clamp(46px,15vw,88px);font-weight:700;line-height:1.05;margin:4px 0 2px;
+    color:#fff;text-shadow:0 0 26px rgba(255,206,77,.22);
+  }
+  .clock .date{font-size:12px;color:var(--dim)}
+  .state{
+    display:inline-flex;align-items:center;gap:7px;margin-top:10px;
+    padding:5px 14px;border-radius:999px;font-size:13px;font-weight:700;
+    background:#0f172c;border:1px solid var(--line);color:var(--dim);
+  }
+  .state .dot{width:8px;height:8px;border-radius:50%;background:#59688f}
+  .state.on{color:var(--ok);border-color:#2c6a56}
+  .state.on .dot{background:var(--ok);animation:blink 1.4s ease-in-out infinite}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+
+  .next{
+    margin-top:12px;background:#0f172c;border:1px solid var(--line);border-radius:14px;
+    padding:12px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  }
+  .next .k{font-size:12px;color:var(--dim);letter-spacing:1px}
+  .next .v{font-size:16px;font-weight:800;color:var(--gold)}
+  .next .cd{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:26px;font-weight:700}
+
+  .acts{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+  button{font-family:inherit}
+  .btn{
+    padding:12px 18px;border-radius:12px;border:1px solid var(--line);background:var(--card2);
+    color:var(--txt);font-size:14px;font-weight:700;cursor:pointer;transition:.18s;
+  }
+  .btn:hover:not(:disabled){border-color:#5b6fae;transform:translateY(-1px)}
+  .btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+  .btn.primary{
+    flex:1 1 200px;background:linear-gradient(180deg,var(--gold),var(--gold2));color:#3a2a00;
+    border-color:transparent;font-size:17px;padding:15px 22px;box-shadow:0 8px 20px rgba(255,180,60,.25);
+  }
+  .btn.stop{flex:0 0 auto;background:#2a1c2c;border-color:#5c3346;color:#ffb4c2}
+  .btn.small{padding:6px 11px;font-size:12px;border-radius:9px}
+
+  .panel{
+    margin-top:14px;background:linear-gradient(180deg,var(--card),#141d34);
+    border:1px solid var(--line);border-radius:18px;padding:14px;box-shadow:var(--shadow);
+  }
+  .panel h2{margin:0 0 10px;font-size:13px;color:var(--dim);letter-spacing:2px;font-weight:700;
+    display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .panel h2 span.cur{color:var(--gold);letter-spacing:0}
+
+  .chain{
+    display:flex;align-items:center;gap:9px;margin-bottom:10px;font-size:13px;color:var(--dim);
+    background:#0f172c;border:1px solid var(--line);border-radius:11px;padding:9px 11px;cursor:pointer;
+  }
+  .chain input{accent-color:var(--gold);width:16px;height:16px;flex:0 0 auto}
+  .chain b{color:var(--txt)}
+
+  .note{
+    background:#231d10;border:1px solid #5c4a22;color:#ffd89a;border-radius:12px;
+    padding:10px 12px;font-size:12.5px;line-height:1.7;margin-top:12px;
+  }
+  .note b{color:var(--gold)}
+
+  ul.timeline{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+  ul.timeline li{
+    display:grid;grid-template-columns:auto 74px 1fr auto;align-items:center;gap:10px;
+    background:#0f172c;border:1px solid var(--line);border-radius:12px;padding:10px 12px;transition:.2s;
+  }
+  ul.timeline li.done{opacity:.45}
+  ul.timeline li.next{border-color:var(--gold);background:#171f38;box-shadow:0 0 0 1px rgba(255,206,77,.25)}
+  ul.timeline li.firing{border-color:var(--ok);background:#12291f}
+  .pin{width:10px;height:10px;border-radius:50%;background:#3c4a71}
+  li.done .pin{background:var(--ok)}
+  li.next .pin{background:var(--gold);box-shadow:0 0 0 4px rgba(255,206,77,.18)}
+  .tm{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:19px;font-weight:700;color:#fff}
+  .ds{font-size:13.5px;line-height:1.45}
+  .ds small{display:block;color:var(--dim);font-size:11.5px;margin-top:1px}
+  .ds em{font-style:normal;color:var(--gold);font-size:11.5px;margin-right:5px}
+
+  .edit{display:none;flex-direction:column;gap:8px;margin-top:10px;
+    border-top:1px dashed var(--line);padding-top:12px}
+  .edit.on{display:flex}
+  .erow{display:grid;grid-template-columns:88px 1fr;gap:8px;align-items:center}
+  .erow input{
+    background:#0b1120;border:1px solid var(--line);border-radius:9px;color:var(--txt);
+    padding:8px 9px;font-family:inherit;font-size:14px;width:100%;
+  }
+  .erow input[type=time]{font-family:var(--mono);font-weight:700;color-scheme:dark}
+  .erow input:focus,.btn:focus-visible,.tab:focus-visible,.sub:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+  .erow .ttl{font-size:12px;color:var(--dim)}
+
+  .sfx{
+    display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:12px;
+    background:#0f172c;border:1px solid var(--line);border-radius:12px;padding:10px 12px;
+  }
+  .sfx .grp{display:flex;align-items:center;gap:8px;flex:1 1 230px;min-width:200px}
+  .sfx span{font-size:12px;color:var(--dim);font-weight:700;flex:0 0 auto}
+  .sfx span b{color:var(--gold)}
+  .sfx select{
+    flex:1;background:#0b1120;border:1px solid var(--line);color:var(--txt);border-radius:9px;
+    padding:7px 9px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;
+  }
+  .sfx input[type=range]{flex:1;accent-color:var(--gold);min-width:90px}
+  .sfx select:focus-visible,.sfx input:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+  #banner{
+    position:fixed;inset:0;display:none;align-items:center;justify-content:center;
+    background:rgba(6,10,20,.93);z-index:99;padding:24px;text-align:center;cursor:pointer;
+  }
+  #banner.on{display:flex;animation:fade .3s ease}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+  #banner .box{max-width:640px}
+  #banner .bt{font-size:clamp(15px,3.4vw,20px);color:var(--gold);letter-spacing:4px;margin-bottom:14px}
+  #banner .bm{font-size:clamp(30px,8.5vw,64px);font-weight:900;line-height:1.25;color:#fff}
+  #banner .bs{margin-top:18px;font-size:13px;color:var(--dim)}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+  footer{text-align:center;color:#63719a;font-size:11px;margin-top:22px;line-height:1.9}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>考試計時器</h1>
+    <p>依考場時程自動播放上課鐘與收卷語音提醒</p>
+    <p style="margin-top:6px"><a href="wheel.html">→ 前往 12500 隨機抽題滾輪</a></p>
+  </header>
+
+  <div class="subs" id="subs"></div>
+  <div class="tabs" id="tabs"></div>
+
+  <div class="clock">
+    <div class="lab" id="clockLab">起始時刻</div>
+    <div class="now" id="now">--:--:--</div>
+    <div class="date" id="date">—</div>
+    <div class="state" id="state"><span class="dot"></span><span id="stateTxt">尚未開始計算</span></div>
+
+    <div class="next">
+      <div style="text-align:left">
+        <div class="k">下一個提示</div>
+        <div class="v" id="nextName">—</div>
+      </div>
+      <div style="text-align:right">
+        <div class="k">倒數</div>
+        <div class="cd" id="nextCd">--:--:--</div>
+      </div>
+    </div>
+
+    <div class="acts">
+      <button class="btn primary" id="startBtn">▶ 開始計算</button>
+      <button class="btn stop" id="stopBtn" disabled>■ 停止</button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2><span>時程表</span><span class="cur" id="curName"></span></h2>
+
+    <label class="chain" id="chainLab">
+      <input type="checkbox" id="chain">
+      <span>連續監控<b id="chainSub">本科目</b>的全部卷別（同一天連著考時勾選，不用中途切換）</span>
+    </label>
+
+    <ul class="timeline" id="timeline"></ul>
+
+    <div class="acts" style="margin-top:12px">
+      <button class="btn small" id="editBtn">✎ 修改時間</button>
+      <button class="btn small" id="testBell">🔔 試聽上課鐘</button>
+      <button class="btn small" id="testVoice">🔊 試聽語音</button>
+      <button class="btn small" id="resetBtn">↺ 還原預設</button>
+    </div>
+
+    <div class="sfx">
+      <div class="grp">
+        <span>鐘聲</span>
+        <select id="bellType">
+          <option value="electric">電鈴（最刺耳）</option>
+          <option value="metal">金屬鐘（刺耳）</option>
+          <option value="soft">傳統鐘聲（柔和）</option>
+        </select>
+      </div>
+      <div class="grp">
+        <span>音量 <b id="volTxt">100%</b></span>
+        <input type="range" id="vol" min="0" max="100" value="100">
+      </div>
+    </div>
+
+    <div class="edit" id="editBox">
+      <div class="erow"><span class="ttl">編輯對象</span><span id="editWho" style="font-size:13px;color:var(--gold);font-weight:700"></span></div>
+      <div id="editRows"></div>
+      <div class="acts">
+        <button class="btn small" id="saveBtn">✓ 儲存</button>
+        <button class="btn small" id="cancelBtn">✕ 取消</button>
+      </div>
+    </div>
+
+    <div class="note">
+      <b>使用前務必先按「試聽上課鐘」與「試聽語音」</b>，確認喇叭有聲音、音量足夠。<br>
+      <b>按下「開始計算」的那一刻＝時程表的第一個時間點</b>（例如上午 A 卷就是 08:35），之後全部依相對時間推算，
+      與電腦時鐘現在幾點無關；請在考場實際開始的那一刻按下去。<br>
+      按下後請<b>保持本分頁在最前方、不要關閉或休眠</b>，瀏覽器在背景可能延遲播放。
+    </div>
+  </div>
+
+  <footer>
+    修改後的時間會存在本機瀏覽器，下次開啟仍保留。<br>
+    語音使用系統內建中文語音，若電腦沒有安裝中文語音，會改以連續提示音＋全螢幕文字提示。
+  </footer>
+</div>
+
+<div id="banner"><div class="box">
+  <div class="bt" id="bTitle">提示</div>
+  <div class="bm" id="bMsg"></div>
+  <div class="bs">點擊任意處關閉</div>
+</div></div>
+
+<script>
+(function(){
+  'use strict';
+
+  /* ================= 預設時程 ================= */
+  const SPEAK = '各位考生，離收卷剩下5分鐘';
+  const ev = (t,type,label,text) => ({ t:t, type:type, label:label, text:text||'' });
+  const set = (s,b1,sp,b2,e) => [
+    ev(s,'start','開始計時'), ev(b1,'bell','上課鐘 5 秒'),
+    ev(sp,'speak','語音提醒',SPEAK), ev(b2,'bell','上課鐘 5 秒'), ev(e,'end','結束')
+  ];
+
+  const DEFAULTS = [
+    { id:'12500', title:'12500', sub:'建築物室內設計', papers:[
+      { id:'12500-am', name:'上午題 A 卷', events:set('08:35','08:40','11:35','11:40','11:45') },
+      { id:'12500-pm', name:'下午題 B 卷', events:set('13:15','13:20','15:45','15:50','15:55') }
+    ]},
+    { id:'12600', title:'12600', sub:'建築物室內裝修工程管理', papers:[
+      { id:'12600-a', name:'上午題 A 卷', events:set('08:00','08:05','09:40','09:45','09:50') },
+      { id:'12600-b', name:'上午題 B 卷', events:set('10:15','10:20','09:40','11:55','12:00') },
+      { id:'12600-c', name:'下午題 C 卷', events:set('13:30','13:35','15:10','15:15','15:20') }
+    ]}
+  ];
+  const TYPE_TXT = { start:'開始計時（無聲）', bell:'上課鐘響 5 秒', speak:'女聲語音播報', end:'測驗結束' };
+  const KEY = 'timer12500.v2';
+
+  /* ================= 狀態 ================= */
+  const clone = o => JSON.parse(JSON.stringify(o));
+  const SUBS = clone(DEFAULTS);
+  let vol = 1;
+  let bellType = 'electric';
+
+  try{
+    const raw = localStorage.getItem(KEY);
+    const o = raw ? JSON.parse(raw) : null;
+    if(o){
+      if(typeof o.vol === 'number') vol = o.vol;
+      if(typeof o.bell === 'string') bellType = o.bell;
+      if(o.events) SUBS.forEach(function(s){
+        s.papers.forEach(function(p){
+          const saved = o.events[p.id];
+          if(Array.isArray(saved) && saved.length === p.events.length){
+            saved.forEach(function(e,i){
+              if(e && /^\d{1,2}:\d{2}$/.test(e.t)) p.events[i].t = e.t;
+              if(e && typeof e.text === 'string' && e.text) p.events[i].text = e.text;
+            });
+          }
+        });
+      });
+    }
+  }catch(e){}
+
+  function save(){
+    try{
+      const m = {};
+      SUBS.forEach(s => s.papers.forEach(p => { m[p.id] = p.events.map(e => ({ t:e.t, text:e.text })); }));
+      localStorage.setItem(KEY, JSON.stringify({ events:m, vol:vol, bell:bellType }));
+    }catch(e){}
+  }
+
+  let si = 0, pi = 0;      // 目前科目 / 卷別
+  let chain = false;       // 連續監控整個科目
+  let armed = false;
+  let LIST = [];           // 實際監控的事件（依時間排序）
+  let fired = [];
+  // 計時基準：按下「開始計算」的那一刻＝時程表的第一個時間點，之後一律用相對時間推算，
+  // 完全不看電腦時鐘現在幾點。
+  let simBase = 0, simStart = 0;
+
+  const $ = id => document.getElementById(id);
+  const subject = () => SUBS[si];
+  const paper   = () => SUBS[si].papers[pi];
+
+  /* ================= 聲音 ================= */
+  let actx = null, master = null, keepAlive = null;
+
+  function audio(){
+    if(!actx){
+      actx = new (window.AudioContext || window.webkitAudioContext)();
+      master = actx.createGain();
+      master.gain.value = vol;
+      // 3.2kHz 提升：人耳最敏感的頻段，讓鐘聲更尖銳、更能穿透教室噪音
+      const peak = actx.createBiquadFilter();
+      peak.type = 'peaking';
+      peak.frequency.value = 3200; peak.Q.value = 0.9; peak.gain.value = 9;
+      // 限幅器：可以把音量推到最大又不破音
+      const lim = actx.createDynamicsCompressor();
+      lim.threshold.value = -6; lim.knee.value = 0; lim.ratio.value = 20;
+      lim.attack.value = 0.002; lim.release.value = 0.18;
+      const makeup = actx.createGain();
+      makeup.gain.value = 1;
+      master.connect(peak); peak.connect(lim); lim.connect(makeup); makeup.connect(actx.destination);
+    }
+    if(actx.state === 'suspended') actx.resume();
+    return actx;
+  }
+
+  // 金屬敲擊：harsh = 非諧波泛音、高頻加重、衰減更短
+  function strike(t0, f0, harsh){
+    const parts = harsh
+      ? [[1,0.85],[2.76,0.95],[5.40,0.8],[8.93,0.5],[13.34,0.3]]
+      : [[1,1],[2.0,0.55],[2.76,0.32],[5.4,0.16],[8.1,0.08]];
+    const dec = harsh ? 1.15 : 1.7;
+    parts.forEach(function(p){
+      const o = actx.createOscillator(), g = actx.createGain();
+      o.type = (harsh && p[0] < 3) ? 'triangle' : 'sine';
+      o.frequency.value = f0 * p[0];
+      g.gain.setValueAtTime(0.0001, t0);
+      g.gain.linearRampToValueAtTime(0.4 * p[1], t0 + 0.004);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + dec / Math.sqrt(p[0]));
+      o.connect(g); g.connect(master);
+      o.start(t0); o.stop(t0 + dec + 0.25);
+    });
+  }
+
+  // 電鈴：連續響、以 19Hz 方波做鎚擊斷續，方波＋鋸齒＋失諧拍音 → 最刺耳
+  function playElectric(sec){
+    const t0 = actx.currentTime + 0.05, t1 = t0 + sec;
+    const bus = actx.createGain();
+    bus.gain.setValueAtTime(0.5, t0);
+    bus.connect(master);
+
+    const lfo = actx.createOscillator(), lg = actx.createGain();
+    lfo.type = 'square'; lfo.frequency.value = 19;
+    lg.gain.value = 0.5;
+    lfo.connect(lg); lg.connect(bus.gain);
+    lfo.start(t0); lfo.stop(t1 + 0.05);
+
+    [['square',760,0.17],['square',1141,0.12],['sawtooth',1802,0.07],['square',2530,0.05]]
+      .forEach(function(s){
+        [1, 1.007].forEach(function(det, k){
+          const o = actx.createOscillator(), g = actx.createGain();
+          o.type = s[0];
+          o.frequency.value = s[1] * det;
+          g.gain.value = s[2] * (k ? 0.8 : 1);
+          o.connect(g); g.connect(bus);
+          o.start(t0); o.stop(t1 + 0.05);
+        });
+      });
+
+    bus.gain.setValueAtTime(0.5, t1 - 0.06);
+    bus.gain.linearRampToValueAtTime(0, t1);
+  }
+
+  function playBell(sec){
+    audio();
+    sec = sec || 5;
+    if(bellType === 'electric'){ playElectric(sec); return; }
+    const harsh = bellType === 'metal';
+    const gap = harsh ? 0.7 : 1.25;
+    const t0 = actx.currentTime + 0.06;
+    let i = 0;
+    for(let t = 0; t <= sec - (harsh ? 0.5 : 1.1); t += gap){
+      strike(t0 + t, harsh ? ((i % 2) ? 880 : 1108.73) : ((i % 2) ? 523.25 : 659.25), harsh);
+      i++;
+    }
+  }
+  function beeps(n){
+    audio();
+    const t0 = actx.currentTime + 0.05;
+    for(let i=0;i<n;i++){
+      const o = actx.createOscillator(), g = actx.createGain(), t = t0 + i*0.42;
+      o.type='square'; o.frequency.value = 1046;
+      g.gain.setValueAtTime(0.0001,t);
+      g.gain.linearRampToValueAtTime(0.2,t+0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001,t+0.3);
+      o.connect(g); g.connect(master); o.start(t); o.stop(t+0.32);
+    }
+  }
+
+  let voice = null;
+  function pickVoice(){
+    if(!window.speechSynthesis) return null;
+    const vs = speechSynthesis.getVoices() || [];
+    const zh = vs.filter(v => /zh[-_]?(TW|CN|HK)/i.test(v.lang) || /Chinese|中文|國語|普通话/i.test(v.name));
+    if(!zh.length) return null;
+    const tw = zh.filter(v => /zh[-_]?TW/i.test(v.lang));
+    const pool = tw.length ? tw : zh;
+    const fem = pool.find(v => /(hanhan|yating|xiaoxiao|huihui|female|女|曉|婷|漢)/i.test(v.name));
+    return fem || pool[0];
+  }
+  if(window.speechSynthesis){
+    voice = pickVoice();
+    speechSynthesis.onvoiceschanged = function(){ voice = pickVoice(); };
+  }
+  function speak(txt){
+    if(!window.speechSynthesis){ beeps(3); return false; }
+    if(!voice) voice = pickVoice();
+    if(!voice){ beeps(3); return false; }
+    try{
+      speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(txt);
+      u.voice = voice;
+      u.lang = voice.lang || 'zh-TW';
+      u.rate = 0.92; u.pitch = 1.05; u.volume = vol;
+      speechSynthesis.speak(u);
+      return true;
+    }catch(e){ beeps(3); return false; }
+  }
+
+  /* ================= 時間工具 ================= */
+  const pad = n => (n < 10 ? '0' : '') + n;
+  function todayAt(hhmm){
+    const p = String(hhmm).split(':');
+    const d = new Date();
+    d.setHours(+p[0] || 0, +p[1] || 0, 0, 0);
+    return d.getTime();
+  }
+  function hms(ms){
+    if(ms < 0) ms = 0;
+    const s = Math.floor(ms/1000);
+    return pad(Math.floor(s/3600)) + ':' + pad(Math.floor(s/60)%60) + ':' + pad(s%60);
+  }
+  function esc(s){
+    return String(s == null ? '' : s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  /* ================= 建立監控清單 ================= */
+  function rebuild(){
+    const src = chain ? subject().papers : [paper()];
+    LIST = [];
+    src.forEach(function(p){
+      p.events.forEach(function(e){ LIST.push({ e:e, paper:p }); });
+    });
+    LIST.sort((a,b) => todayAt(a.e.t) - todayAt(b.e.t));
+    fired = LIST.map(() => false);
+    renderTimeline();
+  }
+
+  /* ================= 畫面 ================= */
+  function renderSubs(){
+    $('subs').innerHTML = SUBS.map(function(s,i){
+      return '<button class="sub'+(i===si?' on':'')+'" data-s="'+i+'"><b>'+esc(s.title)+'</b>'+esc(s.sub)+'</button>';
+    }).join('');
+    $('subs').querySelectorAll('.sub').forEach(function(b){
+      b.addEventListener('click', function(){
+        if(armed) return;
+        si = +b.getAttribute('data-s'); pi = 0;
+        renderSubs(); renderTabs(); rebuild(); renderEditor(); tick();
+      });
+    });
+  }
+  function renderTabs(){
+    $('tabs').innerHTML = subject().papers.map(function(p,i){
+      return '<button class="tab'+(i===pi?' on':'')+'" data-p="'+i+'">'+esc(p.name)+'</button>';
+    }).join('');
+    $('tabs').querySelectorAll('.tab').forEach(function(b){
+      b.addEventListener('click', function(){
+        if(armed) return;
+        pi = +b.getAttribute('data-p');
+        renderTabs(); rebuild(); renderEditor(); tick();
+      });
+    });
+    $('chainSub').textContent = subject().title;
+  }
+
+  function renderTimeline(){
+    $('curName').textContent = subject().title + '　' + (chain ? '全部卷別' : paper().name);
+    $('editWho').textContent = subject().title + '　' + paper().name;
+    $('timeline').innerHTML = LIST.map(function(it,i){
+      const e = it.e;
+      const d = e.type === 'speak' ? '「' + e.text + '」' : TYPE_TXT[e.type];
+      const tag = chain ? '<em>' + esc(it.paper.name) + '</em>' : '';
+      const btn = (e.type==='bell' || e.type==='speak')
+        ? '<button class="btn small" data-try="'+i+'">試聽</button>' : '<span></span>';
+      return '<li data-i="'+i+'"><span class="pin"></span><span class="tm">'+esc(e.t)+'</span>'+
+             '<span class="ds">'+tag+esc(e.label)+'<small>'+esc(d)+'</small></span>'+btn+'</li>';
+    }).join('');
+    $('timeline').querySelectorAll('[data-try]').forEach(function(b){
+      b.addEventListener('click', function(){
+        const e = LIST[+b.getAttribute('data-try')].e;
+        if(e.type === 'bell') playBell(5); else speak(e.text);
+      });
+    });
+  }
+
+  function renderEditor(){
+    $('editRows').innerHTML = paper().events.map(function(e,i){
+      let h = '<div class="erow"><span class="ttl">'+esc(e.label)+'</span>'+
+              '<input type="time" data-t="'+i+'" value="'+esc(e.t)+'"></div>';
+      if(e.type === 'speak'){
+        h += '<div class="erow"><span class="ttl">語音內容</span>'+
+             '<input type="text" data-x="'+i+'" value="'+esc(e.text)+'"></div>';
+      }
+      return h;
+    }).join('');
+  }
+
+  function showBanner(title, msg){
+    $('bTitle').textContent = title;
+    $('bMsg').textContent = msg;
+    $('banner').classList.add('on');
+    clearTimeout(showBanner._t);
+    showBanner._t = setTimeout(function(){ $('banner').classList.remove('on'); }, 20000);
+  }
+  $('banner').addEventListener('click', function(){ this.classList.remove('on'); });
+
+  /* ================= 主迴圈 ================= */
+  function nextIndex(now){
+    for(let i=0;i<LIST.length;i++){
+      if(!fired[i] && todayAt(LIST[i].e.t) > now) return i;
+    }
+    return -1;
+  }
+
+  function fire(i){
+    const it = LIST[i], e = it.e;
+    fired[i] = true;
+    const li = $('timeline').querySelector('li[data-i="'+i+'"]');
+    if(li){ li.classList.add('firing'); setTimeout(function(){ li.classList.remove('firing'); }, 8000); }
+
+    const who = (chain ? it.paper.name + '　' : '');
+    if(e.type === 'bell'){
+      playBell(5);
+      showBanner(e.t + '　' + who + e.label, '🔔　上課鐘');
+    }else if(e.type === 'speak'){
+      speak(e.text);
+      showBanner(e.t + '　' + who + e.label, e.text);
+    }else if(e.type === 'start'){
+      showBanner(e.t + '　' + who, '開始計時');
+    }else if(e.type === 'end'){
+      showBanner(e.t + '　' + who, '測驗結束');
+      if(i === LIST.length - 1) stop(true);
+    }
+  }
+
+  function tick(){
+    const real = new Date();
+    // 計時中：起始時刻 + 已經過的真實秒數；未開始：直接顯示起始時刻
+    const now = armed ? (simBase + (Date.now() - simStart))
+                      : (LIST.length ? todayAt(LIST[0].e.t) : Date.now());
+    const s = new Date(now);
+    $('clockLab').textContent = armed ? '計時中' : '起始時刻';
+    $('now').textContent = pad(s.getHours()) + ':' + pad(s.getMinutes()) + ':' + pad(s.getSeconds());
+    $('date').textContent = '實際時間 ' + pad(real.getHours()) + ':' + pad(real.getMinutes()) + ':' +
+                            pad(real.getSeconds()) + '　' + real.getFullYear() + ' / ' +
+                            pad(real.getMonth()+1) + ' / ' + pad(real.getDate()) +
+                            '　星期' + '日一二三四五六'[real.getDay()];
+
+    if(armed){
+      for(let i=0;i<LIST.length;i++){
+        if(!fired[i] && now >= todayAt(LIST[i].e.t)) fire(i);
+      }
+    }
+
+    const ni = armed ? nextIndex(now) : -1;
+    $('timeline').querySelectorAll('li').forEach(function(li){
+      const i = +li.getAttribute('data-i');
+      li.classList.toggle('done', !!fired[i]);
+      li.classList.toggle('next', armed && i === ni);
+    });
+
+    if(armed && ni >= 0){
+      const it = LIST[ni];
+      $('nextName').textContent = it.e.t + '　' + (chain ? it.paper.name + ' ' : '') + it.e.label;
+      $('nextCd').textContent = hms(todayAt(it.e.t) - now);
+    }else if(armed){
+      $('nextName').textContent = '已全部完成';
+      $('nextCd').textContent = '00:00:00';
+    }else{
+      $('nextName').textContent = LIST.length
+        ? '按下開始計算，即由 ' + LIST[0].e.t + ' 起跑' : '—';
+      $('nextCd').textContent = '--:--:--';
+    }
+  }
+
+  /* ================= 開始 / 停止 ================= */
+  let wakeLock = null;
+  async function keepScreenOn(){
+    try{
+      if('wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen');
+    }catch(e){}
+  }
+  document.addEventListener('visibilitychange', function(){
+    if(armed && document.visibilityState === 'visible' && !wakeLock) keepScreenOn();
+  });
+
+  function lockUI(on){
+    $('startBtn').disabled = on;
+    $('stopBtn').disabled = !on;
+    $('editBtn').disabled = on;
+    $('resetBtn').disabled = on;
+    $('chain').disabled = on;
+    document.querySelectorAll('.tab,.sub').forEach(t => t.disabled = on);
+  }
+
+  function start(){
+    audio();
+    if(!keepAlive){   // 靜音持續音：讓瀏覽器視此分頁為「正在播放音訊」，降低背景節流
+      keepAlive = actx.createOscillator();
+      const g = actx.createGain();
+      g.gain.value = 0.0001;
+      keepAlive.frequency.value = 60;
+      keepAlive.connect(g); g.connect(actx.destination);
+      keepAlive.start();
+    }
+    if(window.speechSynthesis){   // 先暖機，避免第一次播報被瀏覽器擋下
+      try{ const u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u); }catch(e){}
+    }
+    if(!LIST.length) return;
+    simBase = todayAt(LIST[0].e.t);     // 第一個時間點＝現在
+    simStart = Date.now();
+    fired = LIST.map(() => false);
+    armed = true;
+    keepScreenOn();
+    lockUI(true);
+    $('editBox').classList.remove('on');
+    $('state').classList.add('on');
+    $('stateTxt').textContent = '計時中，由 ' + LIST[0].e.t + ' 起跑';
+    tick();
+  }
+
+  function stop(auto){
+    armed = false;
+    if(wakeLock){ try{ wakeLock.release(); }catch(e){} wakeLock = null; }
+    lockUI(false);
+    $('state').classList.remove('on');
+    $('stateTxt').textContent = auto ? '已完成，計算結束' : '已停止';
+    tick();
+  }
+
+  $('startBtn').addEventListener('click', function(){ start(); });
+  $('stopBtn').addEventListener('click', function(){ stop(false); });
+
+  $('chain').addEventListener('change', function(){
+    if(armed){ $('chain').checked = chain; return; }
+    chain = $('chain').checked;
+    rebuild(); tick();
+  });
+
+  /* ================= 編輯 ================= */
+  $('editBtn').addEventListener('click', function(){
+    const on = $('editBox').classList.toggle('on');
+    if(on) renderEditor();
+  });
+  $('cancelBtn').addEventListener('click', function(){ $('editBox').classList.remove('on'); });
+  $('saveBtn').addEventListener('click', function(){
+    const rows = $('editRows'), evs = paper().events;
+    let bad = false;
+    rows.querySelectorAll('[data-t]').forEach(function(inp){
+      if(!/^\d{1,2}:\d{2}$/.test(inp.value)){ bad = true; return; }
+      evs[+inp.getAttribute('data-t')].t = inp.value;
+    });
+    if(bad){ alert('有時間欄位未填寫完整'); return; }
+    rows.querySelectorAll('[data-x]').forEach(function(inp){
+      const v = inp.value.trim();
+      if(v) evs[+inp.getAttribute('data-x')].text = v;
+    });
+    save();
+    rebuild(); renderEditor(); tick();
+    $('editBox').classList.remove('on');
+  });
+  $('resetBtn').addEventListener('click', function(){
+    if(!confirm('確定將「' + subject().title + '　' + paper().name + '」的時程還原成預設值？')) return;
+    const def = DEFAULTS[si].papers[pi].events;
+    paper().events.forEach(function(e,i){ e.t = def[i].t; e.text = def[i].text; });
+    save();
+    rebuild(); renderEditor(); tick();
+  });
+
+  $('testBell').addEventListener('click', function(){ playBell(5); });
+  $('testVoice').addEventListener('click', function(){
+    const e = paper().events.find(x => x.type === 'speak');
+    const ok = speak(e ? e.text : SPEAK);
+    if(!ok) showBanner('沒有偵測到中文語音', '將改用提示音＋文字提示');
+  });
+
+  const bellSel = $('bellType');
+  bellSel.value = bellType;
+  bellSel.addEventListener('change', function(){
+    bellType = bellSel.value;
+    save();
+    playBell(2.2);            // 換了馬上試聽 2 秒
+  });
+
+  const volEl = $('vol');
+  volEl.value = Math.round(vol * 100);
+  $('volTxt').textContent = Math.round(vol * 100) + '%';
+  volEl.addEventListener('input', function(){
+    vol = volEl.value / 100;
+    $('volTxt').textContent = volEl.value + '%';
+    if(master) master.gain.value = vol;
+    save();
+  });
+
+  window.addEventListener('beforeunload', function(e){
+    if(armed){ e.preventDefault(); e.returnValue = ''; }
+  });
+
+  renderSubs();
+  renderTabs();
+  rebuild();
+  renderEditor();
+  setInterval(tick, 200);
+  tick();
+})();
+</script>
+</body>
+</html>
