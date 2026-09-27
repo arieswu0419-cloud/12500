@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>課程通知｜課程 A 手把手安裝入門（台北場）</title>
+<meta name="description" content="Claude Code 實戰工作坊 課程 A 上課通知：2026/10/9（五）09:00–16:00 台北場，教室地址、交通指引、上課必備與教室開啟說明。">
+<style>
+  :root{
+    --ink:#1A1917;
+    --ink-2:#4A4742;
+    --ink-3:#7C776F;
+    --line:#E5E0D8;
+    --bg:#FAF8F3;
+    --card:#FFFFFF;
+    --accent:#5F9418;
+    --accent-dark:#4B7712;
+    --accent-soft:#EFF7E2;
+    --apple:#8DC63F;
+    --gold:#B4530A;
+    --gold-soft:#FCF3E8;
+    --gold-line:#F0DCC2;
+    --err:#B42318;
+    --err-soft:#FDECEC;
+    --mark:#FFF36B;
+    --radius:14px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ink:#F1EEE8;
+      --ink-2:#CBC6BD;
+      --ink-3:#9A948A;
+      --line:#2F3238;
+      --bg:#15171B;
+      --card:#1D2026;
+      --accent:#8DC63F;
+      --accent-dark:#A6D766;
+      --accent-soft:#233019;
+      --apple:#8DC63F;
+      --gold:#F0A45A;
+      --gold-soft:#2E2418;
+      --gold-line:#4A3A26;
+      --err:#F27B6B;
+      --err-soft:#3A1F1C;
+      --mark:#6B6320;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ink:#F1EEE8;
+    --ink-2:#CBC6BD;
+    --ink-3:#9A948A;
+    --line:#2F3238;
+    --bg:#15171B;
+    --card:#1D2026;
+    --accent:#8DC63F;
+    --accent-dark:#A6D766;
+    --accent-soft:#233019;
+    --apple:#8DC63F;
+    --gold:#F0A45A;
+    --gold-soft:#2E2418;
+    --gold-line:#4A3A26;
+    --err:#F27B6B;
+    --err-soft:#3A1F1C;
+    --mark:#6B6320;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;background:var(--bg);color:var(--ink);
+    font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,-apple-system,"Segoe UI",sans-serif;
+    line-height:1.75;-webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:860px;margin:0 auto;padding:0 16px}
+  a{color:var(--accent-dark)}
+
+  /* nav */
+  .nav{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--bg) 92%,transparent);
+    backdrop-filter:saturate(180%) blur(8px);border-bottom:1px solid var(--line)}
+  .nav .wrap{display:flex;align-items:center;justify-content:space-between;height:60px;gap:12px}
+  .brand{font-weight:700;letter-spacing:.02em;display:flex;align-items:center;gap:10px;white-space:nowrap}
+  .brand .bn>span{color:var(--accent)}
+  .brand .logo{width:36px;height:36px;flex:none;border-radius:9px;
+    background:var(--accent);color:#fff;display:grid;place-items:center;font-size:.95rem;font-weight:800}
+  .navlinks{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+  .navlinks::-webkit-scrollbar{display:none}
+  .navlinks a{font-size:.88rem;color:var(--ink-2);text-decoration:none;padding:6px 10px;border-radius:999px;white-space:nowrap}
+  .navlinks a:hover{background:var(--accent-soft);color:var(--accent-dark)}
+  @media(max-width:560px){.navlinks{display:none}}
+
+  /* hero */
+  .hero{padding:44px 0 8px}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;background:var(--gold-soft);color:var(--gold);
+    font-size:.82rem;font-weight:700;letter-spacing:.04em;padding:6px 14px;border-radius:999px;margin-bottom:18px}
+  .tag{display:inline-block;background:var(--accent);color:#fff;font-weight:700;
+    font-size:.8rem;padding:3px 12px;border-radius:999px;vertical-align:middle}
+  .only{display:inline-block;background:var(--err-soft);color:var(--err);font-weight:700;
+    font-size:.78rem;padding:3px 10px;border-radius:999px;vertical-align:middle;margin-left:6px}
+  h1{font-size:clamp(1.6rem,5vw,2.4rem);line-height:1.3;margin:12px 0 12px;letter-spacing:-.01em}
+  h1 small{display:block;font-size:.58em;color:var(--ink-2);font-weight:700;margin-top:6px}
+  .lede{font-size:1.02rem;color:var(--ink-2);margin:0 0 6px;max-width:40em}
+  .countdown{display:inline-block;margin-top:10px;background:var(--accent-soft);color:var(--accent-dark);
+    font-weight:700;padding:8px 16px;border-radius:10px;font-size:.95rem}
+  .countdown:empty{display:none}
+
+  /* facts */
+  .facts{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;margin:28px 0 0;
+    background:var(--line);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+  @media(max-width:620px){.facts{grid-template-columns:1fr}}
+  .fact{background:var(--card);padding:18px 20px;display:flex;gap:14px;align-items:flex-start}
+  .fact .ic{flex:none;width:38px;height:38px;border-radius:10px;background:var(--accent-soft);color:var(--accent-dark);
+    display:grid;place-items:center}
+  .fact .ic svg{width:20px;height:20px}
+  .fact dt{font-size:.78rem;color:var(--ink-3);letter-spacing:.04em}
+  .fact dd{margin:0;font-weight:700;font-size:1.02rem;line-height:1.5}
+  .fact dd small{display:block;font-weight:400;color:var(--ink-3);font-size:.86rem}
+  .actions{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0 0}
+  .btn{display:inline-flex;align-items:center;gap:8px;border:0;cursor:pointer;font:inherit;font-weight:700;
+    background:var(--accent);color:#fff;padding:10px 20px;border-radius:999px;text-decoration:none;
+    transition:background .15s ease,transform .15s ease;font-size:.94rem}
+  .btn:hover{background:var(--accent-dark)}
+  .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+  .btn.ghost:hover{background:var(--card);border-color:var(--ink-3)}
+  .btn svg{width:16px;height:16px}
+
+  /* sections */
+  section{padding:40px 0 8px;scroll-margin-top:64px}
+  h2{font-size:1.4rem;margin:0 0 6px;letter-spacing:-.01em;display:flex;align-items:center;gap:10px}
+  h2 .n{flex:none;width:30px;height:30px;border-radius:50%;background:var(--accent-soft);color:var(--accent-dark);
+    display:grid;place-items:center;font-weight:700;font-size:.9rem}
+  .sub{color:var(--ink-3);margin:0 0 20px}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px}
+  @media(max-width:480px){.panel{padding:18px 16px}}
+
+  /* bring list */
+  .bring{list-style:none;padding:0;margin:0;display:grid;gap:12px}
+  .bring li{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px}
+  .bring label{display:flex;gap:14px;align-items:flex-start;cursor:pointer}
+  .bring input{appearance:none;-webkit-appearance:none;flex:none;margin:3px 0 0;width:24px;height:24px;
+    border:2px solid var(--line);border-radius:7px;background:var(--bg);display:grid;place-items:center;cursor:pointer;
+    transition:.15s}
+  .bring input:checked{background:var(--accent);border-color:var(--accent)}
+  .bring input:checked::after{content:"";width:6px;height:11px;border:solid #fff;border-width:0 2.5px 2.5px 0;
+    transform:rotate(45deg) translate(-1px,-1px)}
+  .bring input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .bring b{display:block;font-size:1.02rem}
+  .bring span{display:block;color:var(--ink-2);font-size:.93rem}
+  .bring em{font-style:normal;color:var(--err);font-weight:700}
+  .bring li.done{border-color:var(--apple);background:color-mix(in srgb,var(--accent-soft) 60%,var(--card))}
+  .progress{margin:14px 0 0;font-size:.88rem;color:var(--ink-3)}
+
+  /* room access (mirrors the venue's password page) */
+  .room{padding:0;overflow:hidden}
+  .row{display:flex;gap:16px;padding:22px 24px;border-top:1px solid var(--line)}
+  .row:first-child{border-top:0}
+  @media(max-width:480px){.row{padding:18px 16px;gap:12px}}
+  .row .ri{flex:none;width:28px;height:28px;color:var(--ink);margin-top:2px}
+  .row .ri svg{width:26px;height:26px}
+  .row .rb{flex:1;min-width:0}
+  .row h3{margin:0 0 4px;font-size:1.12rem;font-weight:500}
+  .row p{margin:0 0 6px;color:var(--ink-2)}
+  .row p:last-child{margin-bottom:0}
+  .row .addr{color:var(--accent);text-decoration:underline;text-underline-offset:3px}
+  mark{background:var(--mark);color:inherit;font-weight:700;padding:1px 4px}
+  .strong{color:var(--ink)!important;font-weight:700}
+  .pw{font-size:clamp(2.6rem,9vw,3.6rem);font-weight:500;color:var(--accent);line-height:1.1;margin:6px 0 12px;
+    letter-spacing:.04em;font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:12px}
+  .pw .enter{font-size:.62em}
+  .imp{display:flex;gap:12px;align-items:center;flex-wrap:wrap;color:var(--ink-2);font-size:.95rem}
+  .imp .lbl{flex:none;border:1px solid var(--err);color:var(--err);padding:5px 14px;border-radius:4px}
+  .muted{color:var(--ink-3)!important;font-size:.93rem}
+  .room-foot{background:var(--gold-soft);border-top:1px solid var(--gold-line);padding:14px 24px;font-size:.9rem;color:var(--ink-2)}
+  .room-foot a{font-weight:700}
+  @media(max-width:480px){.room-foot{padding:14px 16px}}
+
+  /* transport */
+  .trans{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  @media(max-width:760px){.trans{grid-template-columns:1fr}}
+  .t{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px}
+  .t .th{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+  .t .badge{flex:none;width:36px;height:36px;border-radius:10px;display:grid;place-items:center;color:#fff;font-weight:800}
+  .t .badge svg{width:20px;height:20px}
+  .t.mrt .badge{background:#E3002C}
+  .t.bus .badge{background:#2F5BB7}
+  .t.car .badge{background:var(--gold)}
+  .t h3{margin:0;font-size:1.08rem}
+  .t ul{margin:0;padding-left:1.1em;color:var(--ink-2);font-size:.93rem}
+  .t li{margin-bottom:6px}
+  .t li b{color:var(--ink)}
+  .mapbox{margin-top:14px;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--card)}
+  .mapbox iframe{display:block;width:100%;height:320px;border:0}
+  .mapbox .mf{padding:12px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;font-size:.9rem;color:var(--ink-2)}
+
+  /* course outline */
+  .feat{list-style:none;padding:0;margin:0;display:grid;gap:11px}
+  .feat li{position:relative;padding-left:24px;font-size:.95rem;color:var(--ink-2)}
+  .feat li::before{content:"";position:absolute;left:2px;top:.62em;width:9px;height:9px;border-radius:2px;background:var(--apple)}
+  .feat li b{color:var(--ink)}
+  .out{margin-top:18px;padding-top:15px;border-top:1px solid var(--line);font-size:.93rem;color:var(--accent-dark);font-weight:700}
+
+  /* notes */
+  .notes{margin:0;padding-left:1.2em;color:var(--ink-2)}
+  .notes li{margin-bottom:8px}
+  .notes b{color:var(--ink)}
+
+  footer{margin-top:48px;border-top:1px solid var(--line);padding:26px 0 40px;color:var(--ink-3);font-size:.88rem;text-align:center}
+
+  @media print{
+    .nav,.actions,.mapbox iframe,.progress{display:none!important}
+    body{background:#fff}
+    section{padding-top:20px;break-inside:avoid}
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap">
+    <div class="brand">
+      <span class="logo" aria-hidden="true">A</span>
+      <span class="bn">Aries <span>工作室</span></span>
+    </div>
+    <nav class="navlinks" aria-label="頁面導覽">
+      <a href="#bring">上課必備</a>
+      <a href="#room">教室開啟</a>
+      <a href="#traffic">交通指引</a>
+      <a href="#outline">課程內容</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ===== HERO ===== -->
+  <div class="hero">
+    <span class="eyebrow">📣 課程通知 · 台北場</span>
+    <div><span class="tag">課程 A</span><span class="only">唯一教安裝</span></div>
+    <h1>手把手安裝入門
+      <small>IG／FB 行銷文案規劃 + 建立系統櫃平台</small>
+    </h1>
+    <p class="lede">親愛的學員您好，感謝報名 Claude Code 實戰工作坊！以下是上課當天的資訊，請於開課前詳閱，並依「上課必備」清單完成準備。</p>
+    <div class="countdown" id="countdown"></div>
+
+    <dl class="facts">
+      <div class="fact">
+        <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/></svg></span>
+        <div><dt>上課日期</dt><dd>2026 年 10 月 9 日 星期五<small>09:00 – 16:00（全日 6 小時）</small></dd></div>
+      </div>
+      <div class="fact">
+        <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg></span>
+        <div><dt>課程講師</dt><dd>吳慧琳　Aries</dd></div>
+      </div>
+      <div class="fact" style="grid-column:1/-1">
+        <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span>
+        <div><dt>教室地址</dt><dd>越椒 805<small>臺北市信義區信義路四段 401 號 8 樓 - 805 房（信義財經大樓）</small></dd></div>
+      </div>
+    </dl>
+
+    <div class="actions">
+      <a class="btn" href="https://www.google.com/maps/search/?api=1&query=%E8%87%BA%E5%8C%97%E5%B8%82%E4%BF%A1%E7%BE%A9%E5%8D%80%E4%BF%A1%E7%BE%A9%E8%B7%AF%E5%9B%9B%E6%AE%B5401%E8%99%9F" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
+        Google 地圖導航</a>
+      <button class="btn ghost" type="button" id="ics">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9.5h18M12 13v5M9.5 15.5h5"/></svg>
+        加入行事曆</button>
+      <a class="btn ghost" href="https://thehapp.com/space/showpassword/JA8ZJ" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M17 6l3 3M15 8l2 2"/></svg>
+        教室開啟說明</a>
+    </div>
+  </div>
+
+  <!-- ===== BRING ===== -->
+  <section id="bring">
+    <h2><span class="n">1</span>上課請務必自備</h2>
+    <p class="sub">出門前逐項打勾確認，缺一項都會影響當天進度。</p>
+    <ul class="bring">
+      <li>
+        <label><input type="checkbox" data-k="laptop">
+          <div><b>💻 Windows 筆記型電腦</b>
+            <span>本課程全程以 <b style="display:inline">Windows 10 或 11</b> 環境教學與示範，<em>不支援 Win 7 和 Win 8 作業系統</em>。請記得攜帶充電器。</span></div>
+        </label>
+      </li>
+      <li>
+        <label><input type="checkbox" data-k="net">
+          <div><b>📶 可連線的網路</b>
+            <span>現場提供 Wi-Fi，建議另備手機熱點以防連線不穩。</span></div>
+        </label>
+      </li>
+      <li>
+        <label><input type="checkbox" data-k="claude">
+          <div><b>🔑 Claude Pro 訂閱（USD$20／月，需自行購買）</b>
+            <span>課程使用 Claude Code 需 Pro 以上方案，<em>請於開課前完成訂閱並確認可登入</em>。</span></div>
+        </label>
+      </li>
+    </ul>
+    <p class="progress" id="progress" aria-live="polite"></p>
+  </section>
+
+  <!-- ===== ROOM ACCESS ===== -->
+  <section id="room">
+    <h2><span class="n">2</span>教室開啟說明</h2>
+    <p class="sub">教室為 Happ. 小樹屋「越椒 805」，進入大樓與教室的方式如下。</p>
+
+    <div class="panel room">
+      <div class="row">
+        <span class="ri" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span>
+        <div class="rb">
+          <h3>越椒 805</h3>
+          <p><a class="addr" href="https://www.google.com/maps/search/?api=1&query=%E8%87%BA%E5%8C%97%E5%B8%82%E4%BF%A1%E7%BE%A9%E5%8D%80%E4%BF%A1%E7%BE%A9%E8%B7%AF%E5%9B%9B%E6%AE%B5401%E8%99%9F" target="_blank" rel="noopener">臺北市信義區信義路四段 401 號 8 樓 - 805 房</a></p>
+        </div>
+      </div>
+
+      <div class="row">
+        <span class="ri" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 4H5v16h5M14 12h8M18 8l4 4-4 4"/></svg></span>
+        <div class="rb">
+          <h3>進出方式</h3>
+          <p>平日 17:30 後及假日需自行按信件中 <mark>&lt;開啟一樓大門&gt;</mark> 按鈕，若按鈕無反應請重新整理。</p>
+          <p>此空間位於「信義財經大樓」8 樓，出電梯後右轉即達。</p>
+          <p class="strong">大樓門禁森嚴，請確認人在門口時再按開啟按鈕。進入大樓，請告知管理員為小樹屋訪客。</p>
+        </div>
+      </div>
+
+      <div class="row">
+        <span class="ri" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="3" width="12" height="18" rx="1"/><circle cx="14.5" cy="12" r=".6" fill="currentColor"/></svg></span>
+        <div class="rb">
+          <h3>大門密碼</h3>
+          <p class="muted">無。本課程為平日（週五）09:00–16:00，在 17:30 前，不需按信件中的開門按鈕；進入大樓時告知管理員為「小樹屋訪客」即可。</p>
+        </div>
+      </div>
+
+      <div class="row">
+        <span class="ri" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="7.5" r="4.5"/><path d="M10.7 10.7L21 21M16 16l2.5-2.5M18.5 18.5 21 16"/></svg></span>
+        <div class="rb">
+          <h3>房間密碼</h3>
+          <div class="pw" aria-label="房間密碼 6801，輸入後按 Enter 鍵">6801 <span class="enter" aria-hidden="true">↵</span></div>
+          <div class="imp"><span class="lbl">重要</span><span>預訂時間前 5 分鐘生效，請依門上指示輸入房間密碼</span></div>
+        </div>
+      </div>
+
+      <div class="room-foot">
+        ⓘ 密碼如有異動以場地官方頁面為準：<a href="https://thehapp.com/space/showpassword/JA8ZJ" target="_blank" rel="noopener">thehapp.com/space/showpassword/JA8ZJ</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== TRAFFIC ===== -->
+  <section id="traffic">
+    <h2><span class="n">3</span>交通指引</h2>
+    <p class="sub">教室位於信義路四段、近基隆路口，鄰近台北 101 與世貿中心。信義區停車位有限，<b>強烈建議搭乘大眾運輸</b>。</p>
+
+    <div class="trans">
+      <div class="t mrt">
+        <div class="th"><span class="badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="14" rx="3"/><path d="M5 11h14M8.5 14h.01M15.5 14h.01M8 21l2-4M16 21l-2-4"/></svg></span><h3>捷運</h3></div>
+        <ul>
+          <li><b>淡水信義線（紅線）「台北 101／世貿站」</b>：出站後沿信義路往基隆路方向（往西）步行約 5–8 分鐘。</li>
+          <li><b>「信義安和站」</b>：2A 出口沿信義路四段往東步行約 10–12 分鐘。</li>
+        </ul>
+      </div>
+      <div class="t bus">
+        <div class="th"><span class="badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="15" rx="3"/><path d="M4 11h16M8 21v-3M16 21v-3M8 14.5h.01M16 14.5h.01"/></svg></span><h3>公車</h3></div>
+        <ul>
+          <li>搭乘行經信義路的公車（如 <b>信義幹線</b>），於<b>信義路／基隆路口</b>附近站牌下車，步行約 1–3 分鐘。</li>
+          <li>路線與到站時間建議以「<a href="https://ebus.gov.taipei/ebus" target="_blank" rel="noopener">大臺北公車</a>」App 查詢。</li>
+        </ul>
+      </div>
+      <div class="t car">
+        <div class="th"><span class="badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M8 20V4h5.5a4.5 4.5 0 0 1 0 9H8"/></svg></span><h3>停車場</h3></div>
+        <ul>
+          <li>請使用周邊收費停車場，例如<b>台北 101 購物中心停車場</b>、<b>世貿一館地下停車場</b>（步行約 10 分鐘）。</li>
+          <li>平日上班時段車位緊張，請預留找車位時間；可用「<a href="https://atis.taipei.gov.tw/aspx/park/parkN.aspx?lang=zh-Hant-TW&region=%E4%BF%A1%E7%BE%A9%E5%8D%80" target="_blank" rel="noopener">臺北市停車資訊</a>」查即時空位。</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="mapbox">
+      <iframe title="教室位置地圖" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+        src="https://www.google.com/maps?q=%E8%87%BA%E5%8C%97%E5%B8%82%E4%BF%A1%E7%BE%A9%E5%8D%80%E4%BF%A1%E7%BE%A9%E8%B7%AF%E5%9B%9B%E6%AE%B5401%E8%99%9F&output=embed&hl=zh-TW"></iframe>
+      <div class="mf"><span>信義財經大樓 · 信義路四段 401 號 8 樓 805 房</span>
+        <a href="https://www.google.com/maps/search/?api=1&query=%E8%87%BA%E5%8C%97%E5%B8%82%E4%BF%A1%E7%BE%A9%E5%8D%80%E4%BF%A1%E7%BE%A9%E8%B7%AF%E5%9B%9B%E6%AE%B5401%E8%99%9F" target="_blank" rel="noopener">在 Google 地圖開啟 ↗</a></div>
+    </div>
+  </section>
+
+  <!-- ===== OUTLINE ===== -->
+  <section id="outline">
+    <h2><span class="n">4</span>當天課程內容</h2>
+    <p class="sub">四門課裡唯一教安裝的一門：從 Claude Code 安裝開始，先做 IG／FB 行銷文案規劃暖身，再一路做到可出圖的系統櫃 3D 規劃平台。</p>
+    <div class="panel">
+      <ul class="feat">
+        <li><b>Claude Code 從安裝到能用</b> — 桌面版安裝、登入、介面每一區在做什麼、第一句指令怎麼下</li>
+        <li><b>IG／FB 行銷文案規劃</b> — 用中文講清楚你的客群與案例，排出一個月的貼文主題、貼文文案與 Hashtag、限動腳本，整理成可直接複製貼上的排程表</li>
+        <li><b>文案改寫與多版本</b> — 同一個案例一鍵改成專業版、親切版、短版，配合不同平台語氣</li>
+        <li><b>系統櫃 3D 規劃平台</b> — 櫃體型錄 70 款、8 大類；輸入寬、深、高即時重算；透視／等角／立面／平面四種檢視；66 種板材色板</li>
+        <li><b>七種匯出</b> — 透視圖 PNG、平面／立面圖 PDF 與 DXF、三視圖 PDF、3D 模型 DAE、板材明細 CSV、配置檔 JSON</li>
+        <li><b>多專案、帳號權限與一鍵上線</b> — 每個案子各自存檔、管理者與員工分權限，網站上線後平板打開就能用</li>
+      </ul>
+      <div class="out">結業帶走：裝好能用的 Claude Code、一個月份 IG／FB 貼文規劃，以及可以上線的「系統櫃 3D 規劃平台」</div>
+    </div>
+  </section>
+
+  <!-- ===== NOTES ===== -->
+  <section id="notes">
+    <h2><span class="n">5</span>貼心提醒</h2>
+    <div class="panel">
+      <ol class="notes">
+        <li>建議 <b>08:45 前抵達</b>，預留開機、連網與入座時間；房間密碼於預訂時間前 5 分鐘才生效。</li>
+        <li>請先確認筆電為 <b>Windows 10／11</b>，並已完成 <b>Claude Pro 訂閱與登入</b>，當天才能直接開始安裝與實作。</li>
+        <li>筆電請<b>充飽電並攜帶充電器</b>；全日課程請自備午餐或於附近用餐。</li>
+        <li>大樓門禁森嚴，進入時請告知管理員為<b>「小樹屋訪客」</b>。</li>
+      </ol>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    Aries 工作室 · Claude Code 實戰工作坊 · 課程 A 台北場<br>
+    <a href="https://ariesdesign.ariesdesign.workers.dev/" target="_blank" rel="noopener">課程完整介紹 ↗</a>
+  </div>
+</footer>
+
+<script>
+(function(){
+  /* 倒數 */
+  var start = new Date('2026-10-09T09:00:00+08:00'), end = new Date('2026-10-09T16:00:00+08:00');
+  var cd = document.getElementById('countdown');
+  function tick(){
+    var now = new Date(), ms = start - now;
+    if (now >= end) { cd.textContent = '本場次已結束，感謝參與！'; return; }
+    if (ms <= 0) { cd.textContent = '🟢 課程進行中'; return; }
+    var d = Math.floor(ms / 864e5), h = Math.floor(ms % 864e5 / 36e5);
+    cd.textContent = d > 0 ? '⏳ 距離開課還有 ' + d + ' 天 ' + h + ' 小時'
+                           : '⏳ 距離開課還有 ' + h + ' 小時 ' + Math.floor(ms % 36e5 / 6e4) + ' 分鐘';
+  }
+  tick(); setInterval(tick, 60000);
+
+  /* 必備清單（勾選狀態只存在本機瀏覽器） */
+  var KEY = 'courseA-bring';
+  var boxes = [].slice.call(document.querySelectorAll('.bring input'));
+  var saved = {};
+  try { saved = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) {}
+  function sync(){
+    var n = 0;
+    boxes.forEach(function(b){
+      b.closest('li').classList.toggle('done', b.checked);
+      if (b.checked) n++;
+    });
+    document.getElementById('progress').textContent =
+      n === boxes.length ? '✅ 全部準備好了，當天見！' : '已準備 ' + n + ' / ' + boxes.length + ' 項';
+  }
+  boxes.forEach(function(b){
+    b.checked = !!saved[b.dataset.k];
+    b.addEventListener('change', function(){
+      saved[b.dataset.k] = b.checked;
+      try { localStorage.setItem(KEY, JSON.stringify(saved)); } catch (e) {}
+      sync();
+    });
+  });
+  sync();
+
+  /* 加入行事曆 (.ics) */
+  document.getElementById('ics').addEventListener('click', function(){
+    var ics = [
+      'BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Aries Studio//Course A//ZH-TW','CALSCALE:GREGORIAN',
+      'BEGIN:VEVENT',
+      'UID:courseA-taipei-20261009@aries-studio',
+      'DTSTAMP:20260927T000000Z',
+      'DTSTART:20261009T010000Z',
+      'DTEND:20261009T080000Z',
+      'SUMMARY:課程 A 手把手安裝入門 — IG／FB 行銷文案規劃 + 建立系統櫃平台',
+      'LOCATION:越椒 805\\, 臺北市信義區信義路四段 401 號 8 樓 - 805 房',
+      'DESCRIPTION:講師：吳慧琳 Aries\\n自備：Windows 10/11 筆電、網路（建議備手機熱點）、Claude Pro 訂閱\\n房間密碼：6801 ↵（預訂時間前 5 分鐘生效）\\n教室開啟說明：https://thehapp.com/space/showpassword/JA8ZJ',
+      'BEGIN:VALARM','TRIGGER:-P1D','ACTION:DISPLAY','DESCRIPTION:明天上課：課程 A 手把手安裝入門','END:VALARM',
+      'END:VEVENT','END:VCALENDAR'
+    ].join('\r\n');
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([ics], {type:'text/calendar;charset=utf-8'}));
+    a.download = '課程A-台北場-20261009.ics';
+    document.body.appendChild(a); a.click(); a.remove();
+  });
+})();
+</script>
+</body>
+</html>
