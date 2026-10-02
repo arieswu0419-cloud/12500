@@ -163,6 +163,21 @@
   .bring span{display:block;color:var(--ink-2);font-size:.93rem}
   .bring em{font-style:normal;color:var(--err);font-weight:700}
   .bring li.done{border-color:var(--apple);background:color-mix(in srgb,var(--accent-soft) 60%,var(--card))}
+  .install li{display:flex;gap:14px;align-items:flex-start}
+  .install .no{flex:none;width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;
+    display:grid;place-items:center;font-weight:800;font-size:.92rem;margin-top:1px}
+  .install .body{flex:1;min-width:0}
+  .install .body span b{display:inline}
+  .install .os{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 10px}
+  .install .os span{display:inline-block;font-size:.76rem;font-weight:700;padding:1px 10px;border-radius:999px;
+    border:1px solid var(--line);color:var(--ink-2);background:var(--bg)}
+  .install .dl{display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:.9rem;text-decoration:none;
+    color:var(--accent-dark);border:1px solid var(--accent);border-radius:999px;padding:5px 14px}
+  .install .dl:hover{background:var(--accent-soft)}
+  .install .dl svg{width:15px;height:15px;flex:none}
+  .install .chk{display:inline-flex;align-items:center;gap:8px;margin-left:12px;font-size:.88rem;color:var(--ink-2);cursor:pointer;vertical-align:middle}
+  .install .chk input{margin:0}
+  @media(max-width:480px){.install .chk{margin:10px 0 0;display:flex}}
   .progress{margin:14px 0 0;font-size:.88rem;color:var(--ink-3)}
 
   /* room access (mirrors the venue's password page) */
@@ -238,6 +253,7 @@
     </div>
     <nav class="navlinks" aria-label="頁面導覽">
       <a href="#bring">上課必備</a>
+      <a href="#install">事先安裝</a>
       <a href="#room">教室開啟</a>
       <a href="#traffic">交通指引</a>
       <a href="#outline">課程內容</a>
@@ -323,12 +339,6 @@
         </label>
       </li>
       <li>
-        <label><input type="checkbox" data-k="cc">
-          <div><b>🛠 Claude Code 已安裝並可登入</b>
-            <span>本課<em>不教安裝</em>。上過課程 A 的同學請確認軟體還能正常開啟；沒上過 A 的同學請於開課前自行安裝完成。</span></div>
-        </label>
-      </li>
-      <li>
         <label><input type="checkbox" data-k="acad">
           <div><b>📐 AutoCAD 已安裝並可開啟<span class="for">課程 C</span></b>
             <span>外掛會直接裝進你自己的 AutoCAD 測試，<em>請於開課前安裝完成並確認可以開啟</em>。只上課程 D 的同學可略過。</span></div>
@@ -341,12 +351,50 @@
         </label>
       </li>
     </ul>
+  </section>
+
+  <!-- ===== INSTALL ===== -->
+  <section id="install">
+    <h2><span class="n">2</span>事先安裝好三個軟體</h2>
+    <p class="sub">請在開課前，依你的電腦下載 <b>Windows 版</b>或 <b>Mac 版</b>，把下面三個軟體安裝完成並確認可以開啟。</p>
+    <ul class="bring install">
+      <li>
+        <span class="no" aria-hidden="true">1</span>
+        <div class="body">
+          <b>Claude Code 桌機版</b>
+          <span>Claude 官方桌機版應用程式，課程全程用它操作 Claude Code。安裝後請用你的 <b>Claude Pro 帳號登入</b>。</span>
+          <div class="os"><span>Windows 版</span><span>Mac 版</span></div>
+          <a class="dl" href="https://claude.com/download" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M4 19h16"/></svg>下載 Claude 桌機版</a>
+          <label class="chk"><input type="checkbox" id="app-claude" data-k="app-claude">已安裝完成</label>
+        </div>
+      </li>
+      <li>
+        <span class="no" aria-hidden="true">2</span>
+        <div class="body">
+          <b>GitHub Desktop</b>
+          <span>GitHub 官方桌機版，用來管理專案程式檔案的版本。安裝後請<b>登入 GitHub 帳號</b>（還沒有帳號請先到 github.com 免費註冊）。</span>
+          <div class="os"><span>Windows 版</span><span>Mac 版</span></div>
+          <a class="dl" href="https://desktop.github.com/download" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M4 19h16"/></svg>下載 GitHub Desktop</a>
+          <label class="chk"><input type="checkbox" id="app-github" data-k="app-github">已安裝完成</label>
+        </div>
+      </li>
+      <li>
+        <span class="no" aria-hidden="true">3</span>
+        <div class="body">
+          <b>Neon</b>
+          <span>Neon 雲端資料庫的桌機版（由 WebCatalog 提供）。下載頁可選 Windows 或 Mac 版本。</span>
+          <div class="os"><span>Windows 版</span><span>Mac 版</span></div>
+          <a class="dl" href="https://webcatalog.io/zh-TW/apps/neon" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M4 19h16"/></svg>下載 Neon</a>
+          <label class="chk"><input type="checkbox" id="app-neon" data-k="app-neon">已安裝完成</label>
+        </div>
+      </li>
+    </ul>
     <p class="progress" id="progress" aria-live="polite"></p>
   </section>
 
   <!-- ===== ROOM ACCESS ===== -->
   <section id="room">
-    <h2><span class="n">2</span>教室開啟說明</h2>
+    <h2><span class="n">3</span>教室開啟說明</h2>
     <p class="sub">教室為 Happ. 小樹屋「越椒 805」，進入大樓與教室的方式如下。</p>
 
     <div class="panel room">
@@ -393,7 +441,7 @@
 
   <!-- ===== TRAFFIC ===== -->
   <section id="traffic">
-    <h2><span class="n">3</span>交通指引</h2>
+    <h2><span class="n">4</span>交通指引</h2>
     <p class="sub">教室位於信義路四段、近基隆路口，鄰近台北 101 與世貿中心。信義區停車位有限，<b>強烈建議搭乘大眾運輸</b>。</p>
 
     <div class="trans">
@@ -430,7 +478,7 @@
 
   <!-- ===== OUTLINE ===== -->
   <section id="outline">
-    <h2><span class="n">4</span>當天課程內容</h2>
+    <h2><span class="n">5</span>當天課程內容</h2>
     <p class="sub">把設計師最常重複的動作做成自己的外掛：上午在 AutoCAD、下午在 SketchUp。兩門課的成品各自獨立。</p>
     <div class="ses-grid">
       <div class="panel ses-card">
@@ -469,7 +517,7 @@
 
   <!-- ===== NOTES ===== -->
   <section id="notes">
-    <h2><span class="n">5</span>貼心提醒</h2>
+    <h2><span class="n">6</span>貼心提醒</h2>
     <div class="panel">
       <ol class="notes">
         <li>課程 C 建議 <b>08:45 前</b>、只上課程 D 建議 <b>12:45 前</b>抵達，預留開機、連網與入座時間；房間密碼於預訂時間前 5 分鐘才生效。</li>
